@@ -1,0 +1,95 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: devops-tools-preview-environments
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: devops-tools-hub
+    gitops.argoproj.io/type: ephemeral-preview
+spec:
+  # ----------------------------------------------------------------------------
+  # Generator: Watches GitHub Pull Requests and dynamically emits parameters
+  # for every open PR (e.g. {{number}}, {{branch}}, {{head_sha}})
+  # ----------------------------------------------------------------------------
+  generators:
+    - pullRequest:
+        github:
+          owner: mkbntech
+          repo: devops-tools-hub
+          # Optional: filter by labels so only PRs labeled "preview" get an environment
+          # labels:
+          #   - preview
+          # Secret reference containing the GitHub Personal Access Token (PAT)
+          tokenRef:
+            secretName: github-pr-token
+            key: token
+        requeueAfterSeconds: 30
+
+  # ----------------------------------------------------------------------------
+  # Template: The blueprint for the dynamically generated Argo CD Application
+  # ----------------------------------------------------------------------------
+  template:
+    metadata:
+      name: 'devops-tools-pr-{{number}}'
+      namespace: argocd
+      labels:
+        environment: preview
+        pr-number: '{{number}}'
+      annotations:
+        preview.gitops/branch: '{{branch}}'
+      # Cascade deletion finalizer: cleans up all child Kubernetes resources when PR is closed
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/mkbntech/devops-tools-hub.git'
+        # Target the exact commit SHA of the PR head for deterministic deployments
+        targetRevision: '{{head_sha}}'
+        path: charts/devops-tools-hub
+        helm:
+          releaseName: 'devops-tools-pr-{{number}}'
+          parameters:
+            - name: previewEnvironment.enabled
+              value: "true"
+            - name: previewEnvironment.prNumber
+              value: "{{number}}"
+            - name: previewEnvironment.branchName
+              value: "{{branch}}"
+            - name: previewEnvironment.commitSha
+              value: "{{head_sha}}"
+            # Dynamic image tag built and pushed to Azure Container Registry (ACR) for this PR
+            - name: image.repository
+              value: "devopstools1.azurecr.io/devops-tools-hub"
+            - name: image.tag
+              value: "pr-{{number}}"
+            # Dynamic subdomains: e.g. pr2.57.166.243.138.nip.io or pr-2.57-166-243-138.nip.io
+            - name: ingress.hosts[0].host
+              value: "pr{{number}}.<lb-ip>.nip.io"
+            - name: ingress.hosts[1].host
+              value: "pr-{{number}}.<lb-ip>.nip.io"
+            # Explicit single replica to reduce AKS compute footprint
+            - name: replicaCount
+              value: "1"
+
+      destination:
+        server: 'https://kubernetes.default.svc'
+        # Isolated dynamic namespace per PR
+        namespace: 'preview-pr-{{number}}'
+
+      syncPolicy:
+        automated:
+          # Automatically prune deleted resources
+          prune: true
+          # Automatically heal cluster state drift
+          selfHeal: true
+        syncOptions:
+          # Automatically create the preview namespace in AKS if it does not exist
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 1m

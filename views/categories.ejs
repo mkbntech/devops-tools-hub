@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+
+<main class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div class="section-header" style="text-align: center; max-width: 750px; margin: 0 auto 3.5rem;">
+    <span class="section-eyebrow">Taxonomy &amp; Architecture Map</span>
+    <h1 class="section-title" style="font-size: 2.75rem; margin-bottom: 1rem;">
+      DevOps &amp; Cloud Native Domains
+    </h1>
+    <p style="color: var(--text-secondary); font-size: 1.15rem;">
+      Modern cloud engineering spans seven foundational disciplines. Explore the tools shaping each architectural domain below.
+    </p>
+  </div>
+
+  <% categories.forEach(function(cat) { 
+       const catTools = toolsByCategory[cat.category] || [];
+  %>
+    <section style="margin-bottom: 3.5rem;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.6rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
+          <span style="color: var(--accent-cyan);">■</span> <%= cat.category %>
+        </h2>
+        <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">
+          <%= catTools.length %> tool<%= catTools.length === 1 ? '' : 's' %> in domain
+        </span>
+      </div>
+
+      <div class="tools-grid">
+        <% catTools.forEach(function(tool) { %>
+          <%- include('partials/tool-card', { tool: tool }) %>
+        <% }) %>
+      </div>
+    </section>
+  <% }) %>
+</main>
+
+<%- include('partials/footer') %>

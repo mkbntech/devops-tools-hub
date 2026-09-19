@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'DevOps & Cloud Native Tools Hub' %></title>
+  
+  <!-- Head theme guard to eliminate Flash of Wrong Theme (FOUT) -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('devops_tools_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'dark'); // default dark for developer hub
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/img/logo.svg">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="/" class="brand">
+        <img src="/img/logo.svg" alt="DevOps Hub Logo" class="brand-icon">
+        <div class="brand-title">
+          <span class="brand-name">DevOps Tools Hub</span>
+          <span class="brand-tag">Open Source Cloud & Platform Engineering</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/#tools" class="nav-link">Explore Tools</a>
+        <a href="/categories" class="nav-link">Categories</a>
+        <a href="/about" class="nav-link">About & Architecture</a>
+        <a href="/api/tools" class="nav-link" target="_blank" rel="noopener">REST API</a>
+      </nav>
+
+      <div class="header-actions">
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+          <!-- Sun Icon for switching to light mode -->
+          <svg class="sun-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+          <!-- Moon Icon for switching to dark mode -->
+          <svg class="moon-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3a6 6 0 009 9 9 9 0 11-9-9z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>

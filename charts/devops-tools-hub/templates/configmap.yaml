@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "devops-tools-hub.fullname" . }}-config
+  labels:
+    {{- include "devops-tools-hub.labels" . | nindent 4 }}
+data:
+  NODE_ENV: {{ .Values.env.NODE_ENV | quote }}
+  PORT: {{ .Values.env.PORT | quote }}
+  SITE_TITLE: {{ .Values.env.SITE_TITLE | quote }}
+  {{- if .Values.previewEnvironment.enabled }}
+  PREVIEW_ENV: "true"
+  PR_NUMBER: {{ .Values.previewEnvironment.prNumber | quote }}
+  PR_BRANCH: {{ .Values.previewEnvironment.branchName | quote }}
+  PR_COMMIT: {{ .Values.previewEnvironment.commitSha | quote }}
+  {{- else }}
+  PREVIEW_ENV: "false"
+  {{- end }}

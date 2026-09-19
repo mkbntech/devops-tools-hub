@@ -1,0 +1,17 @@
+apiVersion: v2
+name: devops-tools-hub
+description: Production-grade Helm chart for DevOps Tools Hub with dynamic Ephemeral / PR Preview Environment support
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+icon: https://raw.githubusercontent.com/mkbntech/devops-tools-hub/main/public/img/logo.svg
+keywords:
+  - devops
+  - cloud-native
+  - preview-environments
+  - gitops
+  - argocd
+home: https://github.com/mkbntech/devops-tools-hub
+maintainers:
+  - name: MkbnTech
+    email: mkbntech@gmail.com

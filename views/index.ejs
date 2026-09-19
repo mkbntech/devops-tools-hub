@@ -1,0 +1,108 @@
+<%- include('partials/header') %>
+
+<main>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-glow"></div>
+    <div class="container hero-content">
+      <div class="hero-pill">
+        <span class="hero-pill-dot"></span>
+        <span>100% Free &amp; Open Source Stack Reference</span>
+      </div>
+
+      <h1 class="hero-title">
+        The Open Source Standard for <span>Cloud &amp; Platform Engineering</span>
+      </h1>
+
+      <p class="hero-desc">
+        From MKBN-Tech: Explore the world's most battle-tested open-source tools powering modern DevOps, Kubernetes, and Cloud Native architectures. Read architectural breakdowns, learn why teams choose them, and discover real-world practitioner reviews.
+      </p>
+
+      <!-- Stats Strip -->
+      <div class="stats-strip">
+        <div class="stat-box">
+          <div class="stat-number"><%= stats.totalTools %></div>
+          <div class="stat-label">Curated Tools</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number"><%= stats.totalCategories %></div>
+          <div class="stat-label">Core Domains</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number"><%= stats.totalReviews %></div>
+          <div class="stat-label">Field Reports</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number"><%= stats.averageRating %> ★</div>
+          <div class="stat-label">Avg Community Score</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Catalog Area -->
+  <div class="container" id="tools">
+    <% if (pageError) { %>
+      <div class="alert-error"><%= pageError %></div>
+    <% } %>
+
+    <!-- Search and Filter Bar -->
+    <div class="controls-bar">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="text" 
+          id="live-search-input" 
+          class="search-input" 
+          placeholder="Search by tool name, keyword, or tag (e.g., 'kubernetes', 'gitops', 'ebpf', 'metrics')..."
+          value="<%= searchQuery %>"
+          autocomplete="off">
+      </div>
+
+      <nav class="category-tabs" aria-label="Tool Categories">
+        <a href="/#tools" class="category-tab <%= activeCategory === 'all' || activeCategory === '' ? 'active' : '' %>">
+          <span>All Domains</span>
+          <span class="tab-count">(<%= stats.totalTools %>)</span>
+        </a>
+        <% categories.forEach(function(cat) { %>
+          <a href="/?category=<%= encodeURIComponent(cat.category) %>#tools" 
+             class="category-tab <%= activeCategory === cat.category ? 'active' : '' %>">
+            <span><%= cat.category %></span>
+            <span class="tab-count">(<%= cat.count %>)</span>
+          </a>
+        <% }) %>
+      </nav>
+    </div>
+
+    <!-- Active Filter Summary -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; font-size:0.9rem; color:var(--text-secondary);">
+      <div>
+        Showing <strong id="visible-tools-count" style="color:var(--text-primary);"><%= tools.length %></strong> open source tools
+        <% if (activeCategory && activeCategory !== 'all') { %>
+          in <strong style="color:var(--accent-cyan);"><%= activeCategory %></strong>
+        <% } %>
+      </div>
+      <% if (activeCategory && activeCategory !== 'all') { %>
+        <a href="/#tools" style="font-size:0.85rem; color:var(--accent-blue);">Clear category filter &times;</a>
+      <% } %>
+    </div>
+
+    <!-- Tools Grid -->
+    <div class="tools-grid" id="tools-grid">
+      <% tools.forEach(function(tool) { %>
+        <%- include('partials/tool-card', { tool: tool }) %>
+      <% }) %>
+    </div>
+
+    <!-- Client-Side Empty State -->
+    <div id="live-empty-state" class="empty-state" style="display: none;">
+      <h3>No matching tools found</h3>
+      <p>Try searching for different keywords like <em>"container"</em>, <em>"metrics"</em>, or <em>"security"</em>.</p>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,22 @@
+<%- include('partials/header') %>
+
+<main class="container" style="padding-top: 5rem; padding-bottom: 6rem; text-align: center;">
+  <div style="max-width: 550px; margin: 0 auto;">
+    <div style="font-family: var(--font-heading); font-size: 5rem; font-weight: 800; color: var(--accent-cyan); line-height: 1; margin-bottom: 1rem;">
+      404
+    </div>
+    <h1 style="font-size: 2rem; margin-bottom: 1rem;">Tool Not Found in the Cluster</h1>
+    <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.1rem;">
+      <% if (toolId) { %>
+        The tool <code><%= toolId %></code> could not be found in our open-source catalog.
+      <% } else { %>
+        The route you are navigating to does not exist in our ingress rules.
+      <% } %>
+    </p>
+    <a href="/#tools" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 1rem;">
+      Return to Tools Catalog
+    </a>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,11 @@
+{{- if .Values.resourceQuota.enabled -}}
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ include "devops-tools-hub.fullname" . }}-quota
+  labels:
+    {{- include "devops-tools-hub.labels" . | nindent 4 }}
+spec:
+  hard:
+    {{- toYaml .Values.resourceQuota.hard | nindent 4 }}
+{{- end }}

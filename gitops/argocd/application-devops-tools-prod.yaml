@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: devops-tools-hub
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: devops-tools-hub
+    environment: production
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/mkbntech/devops-tools-hub.git'
+    targetRevision: main
+    path: charts/devops-tools-hub
+    helm:
+      releaseName: devops-tools-hub
+      parameters:
+        - name: image.repository
+          value: "devopstools1.azurecr.io/devops-tools-hub"
+        - name: image.tag
+          value: "v1.0.0"
+        - name: replicaCount
+          value: "2"
+        - name: ingress.enabled
+          value: "true"
+        - name: ingress.className
+          value: "nginx"
+        - name: ingress.hosts[0].host
+          value: "devops-tools.<lb-ip>.nip.io"
+        - name: previewEnvironment.enabled
+          value: "false"
+        - name: env.SITE_TITLE
+          value: "DevOps & Cloud Native Tools Hub (Production)"
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: devops-tools
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 1m

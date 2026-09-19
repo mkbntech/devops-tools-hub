@@ -1,0 +1,403 @@
+<%- include('partials/header') %>
+
+<main class="container">
+  <!-- Top Navigation -->
+  <div class="tool-detail-header">
+    <a href="/#tools" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back to all tools
+    </a>
+
+    <!-- Detail Hero -->
+    <div class="detail-hero">
+      <div class="detail-logo-wrap">
+        <img src="<%= tool.icon %>" alt="<%= tool.name %> logo" class="tool-logo">
+      </div>
+
+      <div class="detail-header-info">
+        <div class="detail-title-row">
+          <h1 class="detail-title"><%= tool.name %></h1>
+          <%
+            let badgeClass = 'badge-community';
+            if (tool.status && tool.status.includes('Graduated')) {
+              badgeClass = 'badge-graduated';
+            } else if (tool.status && tool.status.includes('Incubating')) {
+              badgeClass = 'badge-incubating';
+            }
+          %>
+          <span class="badge <%= badgeClass %>"><%= tool.status %></span>
+          <span class="badge" style="background:var(--bg-surface-elevated); color:var(--text-secondary); border:1px solid var(--border);">
+            <%= tool.license %>
+          </span>
+        </div>
+
+        <p class="detail-tagline"><%= tool.tagline %></p>
+
+        <div class="detail-meta-row">
+          <a href="#reviews" class="meta-item" style="color:var(--text-primary); text-decoration:underline;">
+            <%- include('partials/rating-stars', { rating: summary.averageRating, count: summary.count }) %>
+          </a>
+
+          <span class="meta-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.784 1.399 8.165-7.333-3.856-7.333 3.856 1.399-8.165-5.934-5.784 8.2-1.192zm0 5.702l-2.232 4.523-4.991.726 3.612 3.521-.852 4.969 4.463-2.347 4.463 2.347-.852-4.969 3.612-3.521-4.991-.726z"/></svg>
+            <strong><%= tool.stars %></strong> GitHub Stars
+          </span>
+
+          <span class="meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            Category: <strong style="color:var(--accent-cyan);"><%= tool.category %></strong>
+          </span>
+        </div>
+
+        <div class="tool-action-links">
+          <a href="<%= tool.website %>" target="_blank" rel="noopener" class="btn btn-primary">
+            Official Website
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+          <a href="<%= tool.github %>" target="_blank" rel="noopener" class="btn btn-secondary">
+            GitHub Repository
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="#reviews-form" class="btn btn-secondary">
+            Write a Review
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Content Layout -->
+  <div class="detail-layout">
+    <div class="detail-main">
+      <!-- What It Does -->
+      <section class="content-block">
+        <h2>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          What is <%= tool.name %>?
+        </h2>
+        <p><%= tool.whatItDoes %></p>
+      </section>
+
+      <!-- Why It's Used -->
+      <section class="content-block">
+        <h2>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          Why is <%= tool.name %> used?
+        </h2>
+        <p><%= tool.whyItsUsed %></p>
+      </section>
+
+      <!-- Architecture & How It Works -->
+      <% if (tool.architecture) { %>
+        <section class="content-block">
+          <h2>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-purple)" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+            Architecture &amp; How It Works
+          </h2>
+          <p><%= tool.architecture %></p>
+        </section>
+      <% } %>
+
+      <!-- Key Features -->
+      <% if (tool.keyFeatures && tool.keyFeatures.length > 0) { %>
+        <section class="content-block">
+          <h2>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-amber)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            Key Capabilities &amp; Strengths
+          </h2>
+          <ul class="feature-list">
+            <% tool.keyFeatures.forEach(function(feat) { %>
+              <li class="feature-item">
+                <span class="feature-bullet"></span>
+                <span><%= feat %></span>
+              </li>
+            <% }) %>
+          </ul>
+        </section>
+      <% } %>
+
+      <!-- Quick Start Snippet -->
+      <% if (tool.quickstart) { %>
+        <section class="content-block">
+          <h2>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+            Quick Start / Terminal Command
+          </h2>
+          <p>Get up and running with <%= tool.name %> in seconds:</p>
+
+          <div class="code-box">
+            <div class="code-header">
+              <div class="code-dots">
+                <span class="code-dot"></span>
+                <span class="code-dot"></span>
+                <span class="code-dot"></span>
+              </div>
+              <button class="copy-btn" data-target="quickstart-code" title="Copy code">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="code-content"><code id="quickstart-code"><%= tool.quickstart %></code></pre>
+          </div>
+        </section>
+      <% } %>
+
+      <!-- When to Use vs When Not To -->
+      <% if (tool.whenToUse) { %>
+        <section class="content-block">
+          <h2>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            When to Pick <%= tool.name %>
+          </h2>
+          <p><%= tool.whenToUse %></p>
+        </section>
+      <% } %>
+    </div>
+
+    <!-- Right Sidebar / Specs -->
+    <aside class="detail-sidebar">
+      <div class="specs-card">
+        <h3>Technical Overview</h3>
+        <div class="specs-list">
+          <div class="spec-row">
+            <span class="spec-key">Domain</span>
+            <span class="spec-val"><%= tool.category %></span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Ecosystem Status</span>
+            <span class="spec-val"><%= tool.status %></span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">License</span>
+            <span class="spec-val"><%= tool.license %></span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">GitHub Popularity</span>
+            <span class="spec-val"><%= tool.stars %></span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Community Rating</span>
+            <span class="spec-val"><%= summary.averageRating ? summary.averageRating.toFixed(1) + ' / 5.0' : 'No ratings yet' %></span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Field Reviews</span>
+            <span class="spec-val"><%= summary.count %> reports</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="specs-card">
+        <h3>Architectural Tags</h3>
+        <div class="tool-card-tags" style="margin-bottom: 0;">
+          <% (tool.tags || []).forEach(function(tag) { %>
+            <span class="tag-pill">#<%= tag %></span>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- Quick Action Box -->
+      <div class="specs-card" style="background:linear-gradient(145deg, var(--bg-surface), var(--bg-surface-elevated)); border-color:rgba(59, 130, 246, 0.3);">
+        <h3 style="color:var(--accent-cyan); border-bottom:none; margin-bottom:0.5rem; padding-bottom:0;">Have You Run This in Prod?</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+          Help fellow engineers evaluate this tool. Share what worked, what failed, and gotchas from your deployment.
+        </p>
+        <a href="#reviews-form" class="btn btn-primary" style="width:100%;">
+          Submit Field Report
+        </a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Recommendations / Companion Tools -->
+  <% if (recommendations && recommendations.length > 0) { %>
+    <section class="recommendations-section">
+      <div class="section-header">
+        <span class="section-eyebrow">Cloud Native Synergy</span>
+        <h2 class="section-title">Companion Tools Often Paired with <%= tool.name %></h2>
+      </div>
+
+      <div class="recs-grid">
+        <% recommendations.forEach(function(rec) { %>
+          <a href="/tools/<%= rec.tool.id %>" class="rec-card">
+            <div class="rec-card-top">
+              <img src="<%= rec.tool.icon %>" alt="<%= rec.tool.name %>" class="rec-logo">
+              <div>
+                <div class="rec-name"><%= rec.tool.name %></div>
+                <div style="font-size:0.75rem; color:var(--text-muted);"><%= rec.tool.category %></div>
+              </div>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.4; margin-bottom:0.85rem;">
+              <%= rec.tool.tagline %>
+            </p>
+            <div class="rec-reason"><%= rec.reason %></div>
+          </a>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Reviews & Community Rating Section -->
+  <section class="reviews-section" id="reviews">
+    <div class="section-header">
+      <span class="section-eyebrow">Practitioner Field Reports</span>
+      <h2 class="section-title">Community Reviews &amp; Production Feedback</h2>
+    </div>
+
+    <% if (reviewSubmitted) { %>
+      <div class="alert-success">
+        ✓ Thank you! Your review has been submitted successfully and is now live for the community.
+      </div>
+    <% } %>
+
+    <% if (formError) { %>
+      <div class="alert-error">
+        <%= formError %>
+      </div>
+    <% } %>
+
+    <!-- Summary Banner -->
+    <div class="review-summary-banner">
+      <div class="summary-score-box">
+        <div class="summary-score"><%= summary.averageRating ? summary.averageRating.toFixed(1) : '—' %></div>
+        <%- include('partials/rating-stars', { rating: summary.averageRating }) %>
+        <div class="summary-count">Based on <%= summary.count %> review<%= summary.count === 1 ? '' : 's' %></div>
+      </div>
+
+      <div class="rating-distribution">
+        <% [5, 4, 3, 2, 1].forEach(function(star) { 
+             const countForStar = (summary.distribution && summary.distribution[star]) || 0;
+             const pct = summary.count > 0 ? (countForStar / summary.count) * 100 : 0;
+        %>
+          <div class="dist-row">
+            <span style="width: 50px;"><%= star %> Stars</span>
+            <div class="dist-bar-wrap">
+              <div class="dist-bar-fill" style="width: <%= pct %>%;"></div>
+            </div>
+            <span style="width: 35px; text-align: right; color: var(--text-muted);"><%= countForStar %></span>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="reviews-list">
+      <% if (reviews.length === 0) { %>
+        <div class="empty-state">
+          <h3>No community reviews yet for <%= tool.name %></h3>
+          <p>Be the first engineer to share hands-on feedback using the form below!</p>
+        </div>
+      <% } else { %>
+        <% reviews.forEach(function(r) { %>
+          <div class="review-card">
+            <div class="review-header">
+              <div class="reviewer-meta">
+                <span class="reviewer-name">@<%= r.author %></span>
+                <span class="reviewer-role"><%= r.role || 'DevOps Practitioner' %></span>
+                <span class="reviewer-exp">Experience: <%= r.experience || 'Production User' %></span>
+              </div>
+              <div style="text-align: right;">
+                <%- include('partials/rating-stars', { rating: r.rating }) %>
+                <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono); margin-top:0.25rem;">
+                  <%= new Date(r.created_at).toLocaleDateString() %>
+                </div>
+              </div>
+            </div>
+
+            <p class="review-comment"><%= r.comment %></p>
+
+            <% if (r.what_liked || r.gotchas) { %>
+              <div class="review-feedback-boxes">
+                <% if (r.what_liked) { %>
+                  <div class="feedback-box feedback-pros">
+                    <span class="feedback-title">✓ What I Liked</span>
+                    <%= r.what_liked %>
+                  </div>
+                <% } %>
+
+                <% if (r.gotchas) { %>
+                  <div class="feedback-box feedback-gotchas">
+                    <span class="feedback-title">⚠ Things to Watch Out For</span>
+                    <%= r.gotchas %>
+                  </div>
+                <% } %>
+              </div>
+            <% } %>
+
+            <div class="review-footer">
+              <span>Verified Community Review</span>
+              <button class="upvote-btn" data-review-id="<%= r.id %>" title="Mark this review as helpful">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                Helpful (<span class="upvote-count"><%= r.upvotes || 0 %></span>)
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <!-- Review Form -->
+    <div class="review-form-wrap" id="reviews-form">
+      <h3>Share Your Experience with <%= tool.name %></h3>
+      <p>Have you evaluated, deployed, or scaled <%= tool.name %> in production? Leave your honest review to help the community.</p>
+
+      <form action="/tools/<%= tool.id %>/reviews" method="POST">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="author">Your Name / Handle *</label>
+            <input type="text" id="author" name="author" class="form-input" placeholder="e.g. alex_devops" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="role">Engineering Role</label>
+            <input type="text" id="role" name="role" class="form-input" placeholder="e.g. Platform Engineer, SRE, Tech Lead">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="experience">Hands-On Experience Level</label>
+            <select id="experience" name="experience" class="form-select">
+              <option value="Daily Production Driver">Daily Production Driver (Primary Stack)</option>
+              <option value="Used in Production (1-3 yrs)">Used in Production (1-3 yrs)</option>
+              <option value="Evaluated in PoC / Staging">Evaluated in PoC / Staging</option>
+              <option value="Learning / Experimenting">Learning / Experimenting</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="rating">Overall Rating (1 to 5 Stars) *</label>
+            <select id="rating" name="rating" class="form-select" required>
+              <option value="5">★★★★★ 5 — Exceptional / Essential</option>
+              <option value="4">★★★★☆ 4 — Very Good / Solid Performer</option>
+              <option value="3">★★★☆☆ 3 — Decent / Has Rough Edges</option>
+              <option value="2">★★☆☆☆ 2 — Challenging to Operate</option>
+              <option value="1">★☆☆☆☆ 1 — Not Recommended</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="whatLiked">What do you like most about it?</label>
+            <input type="text" id="whatLiked" name="whatLiked" class="form-input" placeholder="e.g. Incredible stability, declarative syntax, speed...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="gotchas">Gotchas / challenges to watch out for?</label>
+            <input type="text" id="gotchas" name="gotchas" class="form-input" placeholder="e.g. High memory cardinality, complex setup...">
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label" for="comment">Overall Field Review &amp; Recommendations *</label>
+            <textarea id="comment" name="comment" rows="4" class="form-textarea" placeholder="How did this tool perform under real workloads? What tips would you give another engineer getting started?" required></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.75rem; font-size: 1rem;">
+          Publish Field Report
+        </button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

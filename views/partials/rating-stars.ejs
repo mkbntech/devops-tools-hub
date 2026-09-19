@@ -1,0 +1,13 @@
+<%
+  const currentRating = typeof rating !== 'undefined' ? Number(rating) : 0;
+  const roundedRating = Math.round(currentRating);
+  const reviewCount = typeof count !== 'undefined' ? count : null;
+%>
+<div class="rating-stars" title="<%= currentRating ? currentRating.toFixed(1) + ' out of 5 stars' : 'No ratings yet' %>">
+  <% for (let i = 1; i <= 5; i++) { %>
+    <span class="star <%= i <= roundedRating ? 'filled' : '' %>">&#9733;</span>
+  <% } %>
+  <% if (reviewCount !== null) { %>
+    <span class="rating-meta"><%= currentRating ? currentRating.toFixed(1) : '—' %> (<%= reviewCount %>)</span>
+  <% } %>
+</div>

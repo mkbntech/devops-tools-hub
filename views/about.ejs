@@ -1,0 +1,87 @@
+<%- include('partials/header') %>
+
+<main class="container" style="padding-top: 3.5rem; padding-bottom: 5rem;">
+  <div style="max-width: 860px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3.5rem;">
+      <span class="section-eyebrow">Mission &amp; Architecture</span>
+      <h1 class="section-title" style="font-size: 2.85rem; margin-bottom: 1rem;">
+        About DevOps Tools Hub
+      </h1>
+      <p style="color: var(--text-secondary); font-size: 1.2rem; line-height: 1.6;">
+        An educational portal and reference architecture dedicated to helping engineers discover, understand, and master the open-source software powering the world's digital infrastructure.
+      </p>
+    </div>
+
+    <!-- Educational Pillars -->
+    <div class="content-block" style="margin-bottom: 2.5rem;">
+      <h2>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        The Open-Source Cloud Native Revolution
+      </h2>
+      <p>
+        Modern cloud engineering has shifted away from proprietary, vendor-locked stacks toward modular, openly governed standards. Today, projects backed by foundations like the <strong>Cloud Native Computing Foundation (CNCF)</strong> and the <strong>Linux Foundation</strong> provide world-class alternatives for every layer of the compute stack.
+      </p>
+      <p>
+        Whether you are deploying containers on <strong>Kubernetes</strong>, managing multi-cloud infrastructure with <strong>OpenTofu</strong>, securing zero-trust networking with <strong>Cilium</strong>, or deploying via GitOps with <strong>Argo CD</strong>, open-source tooling gives engineering teams complete sovereignty over their infrastructure.
+      </p>
+    </div>
+
+    <!-- 3-Tier Architecture Explanation -->
+    <div class="content-block" style="margin-bottom: 2.5rem;">
+      <h2>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+        Application 3-Tier Architecture
+      </h2>
+      <p>
+        This application itself is constructed as a clean, highly maintainable <strong>3-tier cloud application</strong>:
+      </p>
+      
+      <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.25rem;">
+        <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--accent-cyan);">
+          <strong style="color: var(--text-primary); font-size: 1.05rem;">Tier 1: Presentation Layer (UI)</strong>
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-top: 0.35rem;">
+            Server-side rendered Express + EJS templates paired with responsive vanilla JavaScript. Features instant client-side search filtering, zero-FOUT dark/light theme switching, and optimistic UI upvotes.
+          </p>
+        </div>
+
+        <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--accent-blue);">
+          <strong style="color: var(--text-primary); font-size: 1.05rem;">Tier 2: Application / API Layer</strong>
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-top: 0.35rem;">
+            Node.js REST API providing clean business logic services: <code>toolService</code> (filtering &amp; querying), <code>reviewService</code> (ratings &amp; validation), and <code>recommendationService</code> (algorithmic graph affinity suggestions).
+          </p>
+        </div>
+
+        <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--accent-purple);">
+          <strong style="color: var(--text-primary); font-size: 1.05rem;">Tier 3: Persistence &amp; Telemetry Layer</strong>
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-top: 0.35rem;">
+            Persistent storage via high-speed SQLite with WAL journal mode (zero setup needed) or PostgreSQL in Docker. Fully instrumented with <code>prom-client</code> exposing Prometheus metrics at <code>/metrics</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Reference -->
+    <div class="content-block" style="margin-bottom: 2.5rem;">
+      <h2>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        REST API Endpoints
+      </h2>
+      <p>
+        DevOps Tools Hub exposes a complete JSON REST API:
+      </p>
+
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1rem; font-family: var(--font-mono); font-size: 0.88rem;">
+        <li><span style="color: var(--accent-green); font-weight: 700;">GET</span> <a href="/api/tools">/api/tools</a> &mdash; List tools with category, status, and search filters</li>
+        <li><span style="color: var(--accent-green); font-weight: 700;">GET</span> <a href="/api/tools/kubernetes">/api/tools/:id</a> &mdash; Get full specifications for a single tool</li>
+        <li><span style="color: var(--accent-green); font-weight: 700;">GET</span> <a href="/api/tools/kubernetes/recommendations">/api/tools/:id/recommendations</a> &mdash; Get companion tool recommendations</li>
+        <li><span style="color: var(--accent-green); font-weight: 700;">GET</span> <a href="/api/tools/kubernetes/reviews">/api/tools/:id/reviews</a> &mdash; Get community reviews and ratings</li>
+        <li><span style="color: var(--accent-blue); font-weight: 700;">POST</span> <code>/api/tools/:id/reviews</code> &mdash; Submit a new practitioner review</li>
+        <li><span style="color: var(--accent-blue); font-weight: 700;">POST</span> <code>/api/reviews/:id/vote</code> &mdash; Upvote a helpful review</li>
+        <li><span style="color: var(--accent-green); font-weight: 700;">GET</span> <a href="/health">/health</a> &mdash; Liveness probe and uptime health check</li>
+        <li><span style="color: var(--accent-green); font-weight: 700;">GET</span> <a href="/metrics">/metrics</a> &mdash; Prometheus scrape endpoint</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: preview-janitor-sa
+  namespace: argocd
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: preview-janitor-role
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "delete"]
+  - apiGroups: ["argoproj.io"]
+    resources: ["applications"]
+    verbs: ["get", "list", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: preview-janitor-binding
+subjects:
+  - kind: ServiceAccount
+    name: preview-janitor-sa
+    namespace: argocd
+roleRef:
+  kind: ClusterRole
+  name: preview-janitor-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: preview-env-janitor
+  namespace: argocd
+  labels:
+    app: preview-janitor
+spec:
+  schedule: "0 */6 * * *" # Runs every 6 hours
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: preview-janitor-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: janitor
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "==> Running Ephemeral Preview Environment Janitor..."
+                  # Find all namespaces starting with preview-pr-
+                  for ns in $(kubectl get ns -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep '^preview-pr-'); do
+                    PR_NUM=$(echo $ns | sed 's/preview-pr-//')
+                    echo "Checking namespace: $ns (PR #$PR_NUM)"
+                    
+                    # Verify if associated Argo CD Application exists
+                    APP_EXISTS=$(kubectl get app -n argocd "devops-tools-pr-$PR_NUM" --ignore-not-found -o name)
+                    if [ -z "$APP_EXISTS" ]; then
+                      echo "Found orphaned namespace with no active Argo CD application: $ns. Deleting..."
+                      kubectl delete ns "$ns" --timeout=60s || true
+                    else
+                      echo "Application devops-tools-pr-$PR_NUM is still active in Argo CD. Keeping namespace."
+                    fi
+                  done
+                  echo "==> Janitor check completed."

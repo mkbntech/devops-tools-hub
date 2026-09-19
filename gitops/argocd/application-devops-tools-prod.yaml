@@ -28,7 +28,7 @@ spec:
         - name: ingress.className
           value: "nginx"
         - name: ingress.hosts[0].host
-          value: "devops-tools.<lb-ip>.nip.io"
+          value: "devops-tools.130.213.179.90.nip.io"
         - name: previewEnvironment.enabled
           value: "false"
         - name: env.SITE_TITLE

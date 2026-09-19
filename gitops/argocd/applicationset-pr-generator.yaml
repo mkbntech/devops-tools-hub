@@ -65,9 +65,9 @@ spec:
               value: "pr-{{number}}"
             # Dynamic subdomains: e.g. pr2.57.166.243.138.nip.io or pr-2.57-166-243-138.nip.io
             - name: ingress.hosts[0].host
-              value: "pr{{number}}.<lb-ip>.nip.io"
+              value: "pr{{number}}.130.213.179.90.nip.io"
             - name: ingress.hosts[1].host
-              value: "pr-{{number}}.<lb-ip>.nip.io"
+              value: "pr-{{number}}.130.213.179.90.nip.io"
             # Explicit single replica to reduce AKS compute footprint
             - name: replicaCount
               value: "1"

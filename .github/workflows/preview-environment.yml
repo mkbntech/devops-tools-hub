@@ -16,7 +16,7 @@ permissions:
 env:
   ACR_LOGIN_SERVER: devopstools1.azurecr.io
   IMAGE_NAME: devops-tools-hub
-  PREVIEW_DOMAIN: 57.166.243.138.nip.io # AKS Ingress Controller LoadBalancer wildcard DNS
+  PREVIEW_DOMAIN: 130.213.179.90.nip.io # AKS Ingress Controller LoadBalancer wildcard DNS
 
 jobs:
   # ----------------------------------------------------------------------------

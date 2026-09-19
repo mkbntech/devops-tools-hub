@@ -1,0 +1,185 @@
+name: Ephemeral Preview Environment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+concurrency:
+  group: preview-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+  pull-requests: write
+
+env:
+  ACR_LOGIN_SERVER: devopstools1.azurecr.io
+  IMAGE_NAME: devops-tools-hub
+  PREVIEW_DOMAIN: 57.166.243.138.nip.io # AKS Ingress Controller LoadBalancer wildcard DNS
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # Job 1: Build & Publish Ephemeral Container Image to ACR
+  # Only executes when PR is opened, synchronized (new commits pushed), or reopened
+  # ----------------------------------------------------------------------------
+  build-and-publish:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Log in to Azure Container Registry using Repository Secrets (ACR_USERNAME, ACR_PASSWORD)
+      - name: Log in to Azure Container Registry (devopstools1)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Extract Docker Metadata & Tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=pr-${{ github.event.number }}
+            type=raw,value=pr-${{ github.event.number }}-${{ github.event.pull_request.head.sha }}
+
+      - name: Build and Push Container Image to ACR
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ----------------------------------------------------------------------------
+  # Job 2: Notify Pull Request with Dynamic Preview URL
+  # ----------------------------------------------------------------------------
+  pr-notification:
+    needs: build-and-publish
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post or Update Preview Environment PR Comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.issue.number;
+            const previewUrl = `http://pr${prNumber}.${process.env.PREVIEW_DOMAIN}`;
+            const commitSha = context.payload.pull_request.head.sha.substring(0, 7);
+            const namespace = `preview-pr-${prNumber}`;
+            const appName = `devops-tools-pr-${prNumber}`;
+
+            const commentBody = `### 🚀 Ephemeral Preview Environment Ready!
+
+            | Property | Details |
+            | :--- | :--- |
+            | **Status** | 🟢 **Live &amp; Deployed** |
+            | **Preview URL** | [${previewUrl}](${previewUrl}) |
+            | **Kubernetes Namespace** | \`${namespace}\` |
+            | **Argo CD Application** | \`${appName}\` |
+            | **Deployed Commit** | \`${commitSha}\` |
+            | **Container Registry** | \`devopstools1.azurecr.io\` |
+            | **Container Image Tag** | \`pr-${prNumber}\` |
+
+            ---
+
+            > 💡 **Automated Lifecycle Notice**:
+            > This environment runs in an isolated, quota-governed namespace on AKS (\`preview-env\` in \`mkbntech\`).
+            > When this Pull Request is **closed or merged**, Argo CD will automatically purge this namespace and all associated resources.
+            `;
+
+            // Search for existing preview bot comment to avoid spamming the PR
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const botComment = comments.find(c => 
+              c.user.login.includes('github-actions') && 
+              c.body.includes('Ephemeral Preview Environment')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+              console.log(`Updated existing preview comment #${botComment.id}`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+              console.log('Created new preview comment');
+            }
+
+  # ----------------------------------------------------------------------------
+  # Job 3: Automated Cleanup on PR Close / Merge
+  # ----------------------------------------------------------------------------
+  pr-teardown:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update PR Comment with Teardown Status
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.issue.number;
+            const namespace = `preview-pr-${prNumber}`;
+            const appName = `devops-tools-pr-${prNumber}`;
+
+            const teardownBody = `### 🛑 Ephemeral Preview Environment Destroyed
+
+            | Property | Details |
+            | :--- | :--- |
+            | **Status** | ⚪ **Torn Down &amp; Purged** |
+            | **Reason** | PR was ${context.payload.pull_request.merged ? 'merged' : 'closed'} |
+            | **Namespace Cleaned** | \`${namespace}\` |
+            | **Argo CD App Deleted** | \`${appName}\` |
+
+            *All compute, memory, ingress routes, and storage allocated to this PR preview have been freed.*
+            `;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const botComment = comments.find(c => 
+              c.user.login.includes('github-actions') && 
+              c.body.includes('Ephemeral Preview Environment')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: teardownBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: teardownBody
+              });
+            }
